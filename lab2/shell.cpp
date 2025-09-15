@@ -71,4 +71,12 @@ int main () {
     }
 
     // Reset the input and output file descriptors of the parent.
+    close(fd[0]);                                //parent is neither reader nor writer: close read end
+    close(fd[1]);                                //parent: close write end as well
+
+    (void)waitpid(c1, nullptr, 0);               //wait for child #1 (ls) to finish
+    (void)waitpid(c2, nullptr, 0);               //wait for child #2 (tr) to finish
+
+    return 0;                                    //success; no output from parent
+
 }
