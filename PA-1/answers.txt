@@ -1,0 +1,25 @@
+PA1 Report — Named Pipes Client
+Name: Sidharth Kammili   UIN: 533005145   Date: 09/28/2025
+
+1) Experimental Setup
+- Machine: GCP VM (Ubuntu), single client/single server over FIFOs
+- Buffer size (-m): 4096 bytes
+- Files tested (created with truncate): 1MB, 5MB, 10MB, 50MB, 100MB
+- Client command pattern: ./client -m 4096 -f <file>
+- Verification: diff received/<file> BIMDC/<file> (no differences)
+
+2) Results
+Raw data: see results.csv
+Plot: see report_chart.png
+
+Observation:
+- Transfer time increases roughly linearly with file size.
+
+3) Does the trend make sense?
+Yes. With a fixed message size (m = 4096), we issue N = ceil(size/m) request/response cycles. Each cycle pays syscall + context-switch + copy costs. As file size grows, total time ~ O(size). Once the file is cached by the OS, disk I/O is not the limiter, so the curve is dominated by IPC overhead.
+
+4) Main Bottleneck (short answer)
+The main bottleneck is per-chunk IPC overhead via FIFOs (user↔kernel copies and context switches) in a strict request/response design. Disk I/O is often cached; increasing -m reduces overhead until it plateaus.
+
+5) Notes/Extensions (optional)
+- Larger -m (e.g., 8–64KB) reduces the number of round trips and can improve throughput until limited by kernel copy bandwidth.
