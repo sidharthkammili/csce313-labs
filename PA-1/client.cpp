@@ -55,6 +55,9 @@ int main (int argc, char *argv[]) {
 		}
 	}
 
+	//ensure output dir exists
+	mkdir("received", 0755);
+
 	std::vector<FIFORequestChannel*> channels;
 
 	int pid = fork(); //launch server as a child
@@ -192,4 +195,7 @@ int main (int argc, char *argv[]) {
 	int status = 0;
 	waitpid(pid, &status, 0); //reap server child
 	return 0;
+}
+
+
 }
