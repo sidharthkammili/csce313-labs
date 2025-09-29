@@ -14,8 +14,11 @@
 #include "FIFORequestChannel.h"
 #include <iostream>
 #include <fstream>
+#include <cstring>
+#include <unistd.h>
 #include <vector>
 #include <sys/wait.h>
+#include <sys/stat.h>
 
 using namespace std;
 
@@ -60,7 +63,7 @@ int main (int argc, char *argv[]) {
 	if (pid == 0) {
 		//only send option -m to server because server doesn't understand the other 5 options
 		std::string m_str = std::to_string(m);
-		exec1("./server", "server", "-m", m_str.c_str(), (char*) nullptr);
+		execl("./server", "server", "-m", m_str.c_str(), (char*) nullptr);
 		//if execl returns, then it failed:
 		perror("exec failed");
 		_exit(127);
@@ -74,8 +77,8 @@ int main (int argc, char *argv[]) {
 
 		if (new_channel_request) {
 			//NEWCHANNEL request issued on control channel
-			MESSAGE_TYPE new = NEWCHANNEL_MSG;
-			channel1.cwrite(&new, sizeof(MESSAGE_TYPE));
+			MESSAGE_TYPE nc = NEWCHANNEL_MSG;
+			channel1.cwrite(&nc, sizeof(MESSAGE_TYPE));
 		//read back server-allocated channel name
 		char namebuffer[64] = {0};
 		channel1.cread(namebuffer, sizeof(namebuffer)); //receive C string
