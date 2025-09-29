@@ -1,0 +1,6 @@
+file,size_bytes,seconds,throughput_MBps
+test-100MB.bin,104857600,2.34,42.74
+test-10MB.bin,10485760,0.61,16.39
+test-1MB.bin,1048576,0.27,3.70
+test-50MB.bin,52428800,1.23,40.65
+test-5MB.bin,5242880,0.48,10.42
